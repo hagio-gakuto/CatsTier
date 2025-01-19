@@ -18,5 +18,4 @@ public class testController {
 	    response.put("message", "Hello from backend!");
 	    return ResponseEntity.ok(response);
 	}
-
 }
