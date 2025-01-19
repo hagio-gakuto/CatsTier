@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { getMessage } from "../utils/messageUtils";
 import { showToast } from "../utils/toastifyUtils";
 import InputError from "../components/InputError";
+import Cookies from "js-cookie";
 
 type Inputs = {
   email: string;
@@ -38,7 +39,14 @@ const LoginPage: React.FC = () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      console.log("Google Login successful:", result.user);
+      // FirebaseのIDトークンを取得
+      const token = await result.user.getIdToken();
+      // Cookieに保存 (トークン)
+      Cookies.set("authToken", token, { expires: 7, secure: true }); // 有効期限7日
+
+      // ログイン成功時の処理
+      // console.log("Google Login successful:", result.user);
+      showToast("success", "ログインしました！");
     } catch (error) {
       console.error("Error during Google login:", error);
     }
@@ -54,8 +62,13 @@ const LoginPage: React.FC = () => {
           data.email,
           data.password
         );
+        // FirebaseのIDトークンを取得
+        const token = await userCredential.user.getIdToken();
+        // Cookieに保存 (トークン)
+        Cookies.set("authToken", token, { expires: 7, secure: true }); // 有効期限7日
         showToast("success", "登録に成功しました！");
-        console.log("Registered user:", userCredential.user);
+        navigate("/"); // 登録成功後にトップページにリダイレクト
+        // console.log("Registered user:", userCredential.user);
       } else {
         // ログイン
         const userCredential = await signInWithEmailAndPassword(
@@ -63,8 +76,13 @@ const LoginPage: React.FC = () => {
           data.email,
           data.password
         );
+        // FirebaseのIDトークンを取得
+        const token = await userCredential.user.getIdToken();
+        // Cookieに保存 (トークン)
+        Cookies.set("authToken", token, { expires: 7, secure: true }); // 有効期限7日
+        navigate("/"); // 登録成功後にトップページにリダイレクト
         showToast("success", "ログインしました！");
-        console.log("Logged in user:", userCredential.user);
+        // console.log("Logged in user:", userCredential.user);
       }
     } catch (error) {
       console.error("Error during email auth:", error);
@@ -98,7 +116,7 @@ const LoginPage: React.FC = () => {
   };
 
   const onSubmit = async (data: Inputs) => {
-    console.log(data);
+    // console.log(data);
     if (isRegistering) {
       handleRegister(data);
     } else {
@@ -111,7 +129,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center py-10 min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white shadow-md rounded">
         <h2 className="text-xl font-bold mb-4 text-center">
           {isRegistering ? "登録" : "ログイン"}
