@@ -4,7 +4,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 py-10 px-10 font-sans tracking-wide">
       <div className="max-w-2xl mx-auto text-center">
-        <a href="javascript:void(0)" className="inline-block">
+        <a className="inline-block">
           <img
             src="https://readymadeui.com/readymadeui-light.svg"
             alt="logo"
@@ -15,17 +15,12 @@ const Footer: React.FC = () => {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
           gravida, mi eu pulvinar cursus, sem elit interdum mauris dipiscing
           elit. Aenean gravida, mi eu pulvinar cursus.{" "}
-          <a
-            href="javascript:void(0)"
-            className="text-sm font-semibold text-blue-500"
-          >
-            Read more...
-          </a>
+          <a className="text-sm font-semibold text-blue-500">Read more...</a>
         </p>
 
         <ul className="flex flex-wrap justify-center gap-6 mt-8">
           <li>
-            <a href="javascript:void(0)">
+            <a>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="fill-blue-600 w-8 h-8"
@@ -39,7 +34,7 @@ const Footer: React.FC = () => {
             </a>
           </li>
           <li>
-            <a href="javascript:void(0)">
+            <a>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-8 h-8"
@@ -61,7 +56,7 @@ const Footer: React.FC = () => {
             </a>
           </li>
           <li>
-            <a href="javascript:void(0)">
+            <a>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-8 h-8"
@@ -75,11 +70,11 @@ const Footer: React.FC = () => {
                   y2="129.74"
                   gradientUnits="userSpaceOnUse"
                 >
-                  <stop offset="0" stop-color="#fae100" />
-                  <stop offset=".15" stop-color="#fcb720" />
-                  <stop offset=".3" stop-color="#ff7950" />
-                  <stop offset=".5" stop-color="#ff1c74" />
-                  <stop offset="1" stop-color="#6c1cd1" />
+                  <stop offset="0" stopColor="#fae100" />
+                  <stop offset=".15" stopColor="#fcb720" />
+                  <stop offset=".3" stopColor="#ff7950" />
+                  <stop offset=".5" stopColor="#ff1c74" />
+                  <stop offset="1" stopColor="#6c1cd1" />
                 </linearGradient>
                 <g data-name="Layer 2">
                   <g data-name="03.Instagram">
@@ -111,7 +106,7 @@ const Footer: React.FC = () => {
             </a>
           </li>
           <li>
-            <a href="javascript:void(0)">
+            <a>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-8 h-8"
@@ -148,7 +143,7 @@ const Footer: React.FC = () => {
               />
             </svg>
           </div>
-          <a href="javascript:void(0)" className="text-gray-300 text-sm ml-3">
+          <a className="text-gray-300 text-sm ml-3">
             <small className="block">Tel</small>
             <strong>180-548-2588</strong>
           </a>
@@ -168,7 +163,7 @@ const Footer: React.FC = () => {
               />
             </svg>
           </div>
-          <a href="javascript:void(0)" className="text-gray-300 text-sm ml-3">
+          <a className="text-gray-300 text-sm ml-3">
             <small className="block">Mail</small>
             <strong>info@example.com</strong>
           </a>
@@ -192,7 +187,7 @@ const Footer: React.FC = () => {
               />
             </svg>
           </div>
-          <a href="javascript:void(0)" className="text-gray-300 text-sm ml-3">
+          <a className="text-gray-300 text-sm ml-3">
             <small className="block">Address</small>
             <strong>123 Main Street City, Country</strong>
           </a>
@@ -212,7 +207,7 @@ const Footer: React.FC = () => {
               />
             </svg>
           </div>
-          <a href="javascript:void(0)" className="text-gray-300 text-sm ml-3">
+          <a className="text-gray-300 text-sm ml-3">
             <small className="block">Fax</small>
             <strong>+1-548-2588</strong>
           </a>
@@ -224,26 +219,17 @@ const Footer: React.FC = () => {
       <div className="flex max-md:flex-col gap-4">
         <ul className="flex flex-wrap gap-4">
           <li className="text-sm">
-            <a
-              href="javascript:void(0)"
-              className="text-gray-300 font-semibold hover:underline"
-            >
+            <a className="text-gray-300 font-semibold hover:underline">
               Terms of Service
             </a>
           </li>
           <li className="text-sm">
-            <a
-              href="javascript:void(0)"
-              className="text-gray-300 font-semibold hover:underline"
-            >
+            <a className="text-gray-300 font-semibold hover:underline">
               Privacy Policy
             </a>
           </li>
           <li className="text-sm">
-            <a
-              href="javascript:void(0)"
-              className="text-gray-300 font-semibold hover:underline"
-            >
+            <a className="text-gray-300 font-semibold hover:underline">
               Security
             </a>
           </li>

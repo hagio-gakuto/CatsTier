@@ -17,6 +17,7 @@ import { getMessage } from "../utils/messageUtils";
 import { showToast } from "../utils/toastifyUtils";
 import InputError from "../components/InputError";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 type Inputs = {
   email: string;
@@ -34,16 +35,36 @@ const LoginPage: React.FC = () => {
     formState: { errors },
   } = useForm<Inputs>();
 
+  const handleServerLogin = async (uid: string) => {
+    const data = {
+      uid: uid, // ユーザーID
+    };
+
+    // サーバーにログイン情報を送信
+    try {
+      const response = await axios.post("/api/login", data);
+      console.log(response.data);
+      return response.data;
+    } catch {
+      showToast("error", getMessage("BE0007"));
+    }
+  };
+
   // Googleログイン
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
       // FirebaseのIDトークンを取得
+      // console.log(result.user.uid);
       const token = await result.user.getIdToken();
+
+      const isNewUser = await handleServerLogin(result.user.uid);
       // Cookieに保存 (トークン)
       Cookies.set("authToken", token, { expires: 7, secure: true }); // 有効期限7日
-
+      // 次の画面にisNewUserを渡す
+      console.log(isNewUser);
+      navigate("/", { state: { isNewUser: isNewUser } });
       // ログイン成功時の処理
       // console.log("Google Login successful:", result.user);
       showToast("success", "ログインしました！");
@@ -64,10 +85,12 @@ const LoginPage: React.FC = () => {
         );
         // FirebaseのIDトークンを取得
         const token = await userCredential.user.getIdToken();
+        const isNewUser = await handleServerLogin(userCredential.user.uid);
         // Cookieに保存 (トークン)
         Cookies.set("authToken", token, { expires: 7, secure: true }); // 有効期限7日
         showToast("success", "登録に成功しました！");
-        navigate("/"); // 登録成功後にトップページにリダイレクト
+        // 次の画面にisNewUserを渡す
+        navigate("/", { state: { isNewUser: isNewUser } });
         // console.log("Registered user:", userCredential.user);
       } else {
         // ログイン
@@ -76,11 +99,14 @@ const LoginPage: React.FC = () => {
           data.email,
           data.password
         );
+
         // FirebaseのIDトークンを取得
         const token = await userCredential.user.getIdToken();
+        const isNewUser = await handleServerLogin(userCredential.user.uid);
         // Cookieに保存 (トークン)
         Cookies.set("authToken", token, { expires: 7, secure: true }); // 有効期限7日
-        navigate("/"); // 登録成功後にトップページにリダイレクト
+        // 次の画面にisNewUserを渡す
+        navigate("/", { state: { isNewUser: isNewUser } });
         showToast("success", "ログインしました！");
         // console.log("Logged in user:", userCredential.user);
       }
@@ -199,9 +225,9 @@ const LoginPage: React.FC = () => {
                 <g
                   id="Icons"
                   stroke="none"
-                  stroke-width="1"
+                  strokeWidth="1"
                   fill="none"
-                  fill-rule="evenodd"
+                  fillRule="evenodd"
                 >
                   {" "}
                   <g
