@@ -14,30 +14,19 @@ const Column: FC<ColumnType> = ({ id, title, cards }) => {
   //   console.log(id);
   //   console.log(cards);
   return (
-    // ソートを行うためのContextです。
-    // strategyは4つほど存在しますが、今回は縦・横移動可能なリストを作るためrectSortingStrategyを採用
     <SortableContext id={id} items={cards} strategy={rectSortingStrategy}>
       <div
         ref={setNodeRef}
-        style={{
-          width: "200px",
-          background: "rgba(245,247,249,1.00)",
-          marginRight: "10px",
-        }}
+        className="bg-red-700 rounded-lg p-2 my-2 flex items-center flex-wrap w-full"
       >
-        <p
-          style={{
-            padding: "5px 20px",
-            textAlign: "left",
-            fontWeight: "500",
-            color: "#575757",
-          }}
-        >
+        <p className="text-center text-lg font-bold py-8 px-8 bg-gray-600 w-[10%] h-full">
           {title}
         </p>
-        {cards.map((card) => (
-          <Card key={card.id} id={card.id} Item={card.Item}></Card>
-        ))}
+        <div className="flex flex-wrap justify-start w-[90%]">
+          {cards.map((card) => (
+            <Card key={card.id} id={card.id} Item={card.Item}></Card>
+          ))}
+        </div>
       </div>
     </SortableContext>
   );

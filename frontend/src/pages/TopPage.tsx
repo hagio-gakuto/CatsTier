@@ -5,7 +5,7 @@ import { showToast } from "../utils/toastifyUtils";
 import Cookies from "js-cookie";
 import IntroductionPopup from "../components/IntroductionPopup";
 import axios from "axios";
-import Product from "../components/Product";
+// import Product from "../components/Product";
 // import { Slider } from "@mui/material";
 
 const TopPage: React.FC = () => {
@@ -58,11 +58,11 @@ const TopPage: React.FC = () => {
     <div className="min-h-screen bg-green-100">
       {/* <Slider /> */}
 
-      <div className="flex flex-wrap justify-center">
+      {/* <div className="flex flex-wrap justify-center">
         {products.map((product, index) => (
           <Product key={index} product={product} /> // ここでProductコンポーネントを呼び出している
         ))}
-      </div>
+      </div> */}
 
       {showPopup && <IntroductionPopup setShowPopup={setShowPopup} />}
       <button

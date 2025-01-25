@@ -32,7 +32,7 @@ const App: React.FC = () => {
 
   if (isLoggedIn === null) {
     // ログイン状態がまだ確認されていない場合、ローディングを表示
-    return <Loading message="Loading" />;
+    return <Loading message="ログイン情報確認中" />;
   }
 
   return (

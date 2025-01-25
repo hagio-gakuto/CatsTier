@@ -1,186 +1,289 @@
+import React, { useState } from "react";
 import {
-  closestCorners,
   DndContext,
-  KeyboardSensor,
+  DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
-  DragOverEvent,
 } from "@dnd-kit/core";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import Column, { ColumnType } from "../components/Column";
-import { useEffect, useState } from "react";
-import { fetchProducts } from "../utils/fetchProductsUtils";
-import { ProductType } from "../components/Product";
+import { arrayMove } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { Plus, Trash2 } from "lucide-react";
+import { TierList, TierItem, Tier } from "../Type";
+import { TierRow } from "../components/TierRow";
+import { DraggableItem } from "../components/DraggableItem";
 
-export default function TierPage() {
-  // 仮データを定義
+const initialItems: TierItem[] = [
+  {
+    id: "1",
+    name: "Mountain",
+    imageUrl:
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=200&h=200",
+  },
+  {
+    id: "2",
+    name: "Beach",
+    imageUrl:
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=200&h=200",
+  },
+  {
+    id: "3",
+    name: "Forest",
+    imageUrl:
+      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=200&h=200",
+  },
+];
 
-  const [products, setProducts] = useState<[]>([]);
-  const [columns, setColumns] = useState<ColumnType[]>([]);
+const initialTiers: TierList = [
+  { id: "S", label: "S", color: "#FF0000", items: [] },
+  { id: "A", label: "A", color: "#FF6B00", items: [] },
+  { id: "B", label: "B", color: "#FFC100", items: [] },
+  { id: "C", label: "C", color: "#6BC950", items: [] },
+  { id: "D", label: "D", color: "#4B76E5", items: [] },
+];
 
-  useEffect(() => {
-    fetchProducts({ setProducts });
-  }, []);
-
-  useEffect(() => {
-    // console.log(products);
-    const data: ColumnType[] = [
-      {
-        id: "Column1",
-        title: "Column1",
-        cards: [
-          {
-            id: "1",
-            Item: {
-              itemCode: "1",
-              catchcopy: "catchcopy",
-              genreId: "genreId",
-              itemCaption: "itemCaption",
-              itemName: "itemName",
-              itemPrice: 1000,
-              itemUrl: "itemUrl",
-              mediumImageUrls: [{ imageUrl: "imageUrl" }],
-              pointRate: 10,
-              reviewAverage: 4.5,
-              reviewCount: 100,
-              shopName: "shopName",
-              shopUrl: "shopUrl",
-            },
-          },
-        ],
-      },
-      {
-        id: "Column2",
-        title: "Column2",
-        cards: products.map((product: ProductType) => ({
-          id: product.Item.itemCode, // unique IDとしてproductCodeを使う
-          Item: product.Item, // 商品情報を展開
-        })),
-      },
-    ];
-    setColumns(data);
-  }, [products]);
-
-  const findColumn = (unique: string | null) => {
-    console.log(unique);
-    if (!unique) {
-      return null;
-    }
-    // overの対象がcolumnの場合があるためそのままidを返す
-    if (columns.some((c) => c.id === unique)) {
-      return columns.find((c) => c.id === unique) ?? null;
-    }
-    const id = String(unique);
-    const itemWithColumnId = columns.flatMap((c) => {
-      const columnId = c.id;
-      return c.cards.map((i) => ({ itemId: i.id, columnId: columnId }));
-    });
-    const columnId = itemWithColumnId.find((i) => i.itemId === id)?.columnId;
-    return columns.find((c) => c.id === columnId) ?? null;
-  };
-
-  const handleDragOver = (event: DragOverEvent) => {
-    // console.log(event);
-    const { active, over, delta } = event;
-    const activeId = String(active.id);
-    const overId = over ? String(over.id) : null;
-    const activeColumn = findColumn(activeId);
-    const overColumn = findColumn(overId);
-    if (!activeColumn || !overColumn || activeColumn === overColumn) {
-      return null;
-    }
-    setColumns((prevState) => {
-      const activeItems = activeColumn.cards;
-      const overItems = overColumn.cards;
-      const activeIndex = activeItems.findIndex((i) => i.id === activeId);
-      const overIndex = overItems.findIndex((i) => i.id === overId);
-      const newIndex = () => {
-        const putOnBelowLastItem =
-          overIndex === overItems.length - 1 && delta.y > 0;
-        const modifier = putOnBelowLastItem ? 1 : 0;
-        return overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
-      };
-      return prevState.map((c) => {
-        if (c.id === activeColumn.id) {
-          c.cards = activeItems.filter((i) => i.id !== activeId);
-          return c;
-        } else if (c.id === overColumn.id) {
-          c.cards = [
-            ...overItems.slice(0, newIndex()),
-            activeItems[activeIndex],
-            ...overItems.slice(newIndex(), overItems.length),
-          ];
-          return c;
-        } else {
-          return c;
-        }
-      });
-    });
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    // console.log(event);
-    const { active, over } = event;
-    const activeId = String(active.id);
-    const overId = over ? String(over.id) : null;
-    const activeColumn = findColumn(activeId);
-    // console.log(activeColumn);
-    const overColumn = findColumn(overId);
-    // console.log(overColumn);
-
-    if (!activeColumn || !overColumn || activeColumn !== overColumn) {
-      return null;
-    }
-    const activeIndex = activeColumn.cards.findIndex((i) => i.id === activeId);
-    // console.log(activeIndex);
-    const overIndex = overColumn.cards.findIndex((i) => i.id === overId);
-    // console.log(overIndex);
-
-    if (activeIndex !== overIndex) {
-      setColumns((prevState) => {
-        return prevState.map((column) => {
-          if (column.id === activeColumn.id) {
-            column.cards = arrayMove(overColumn.cards, activeIndex, overIndex);
-            return column;
-          } else {
-            return column;
-          }
-        });
-      });
-    } else {
-      console.log("activeIndex === overIndex");
-    }
-  };
+function TierPage() {
+  const [tiers, setTiers] = useState<TierList>(initialTiers);
+  const [unrankedItems, setUnrankedItems] = useState<TierItem[]>(initialItems);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [isAddingItem, setIsAddingItem] = useState(false);
+  const [newItemUrl, setNewItemUrl] = useState("");
+  const [newItemName, setNewItemName] = useState("");
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
     })
   );
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeItem = findItem(active.id as string);
+    if (!activeItem) return;
+
+    const overContainer = over.data?.current?.sortable?.containerId || over.id;
+    const activeContainer = findTierId(active.id as string) || "unranked";
+
+    if (activeContainer === overContainer) return;
+
+    if (overContainer === "unranked") {
+      setTiers((prev) => {
+        const newTiers = prev.map((tier) => ({
+          ...tier,
+          items: tier.items.filter((item) => item.id !== activeItem.id),
+        }));
+        return newTiers;
+      });
+      setUnrankedItems((prev) => [...prev, activeItem]);
+    } else {
+      if (activeContainer === "unranked") {
+        setUnrankedItems((prev) =>
+          prev.filter((item) => item.id !== activeItem.id)
+        );
+      } else {
+        setTiers((prev) => {
+          return prev.map((tier) => ({
+            ...tier,
+            items: tier.items.filter((item) => item.id !== activeItem.id),
+          }));
+        });
+      }
+
+      setTiers((prev) => {
+        return prev.map((tier) => {
+          if (tier.id === overContainer) {
+            return {
+              ...tier,
+              items: [...tier.items, activeItem],
+            };
+          }
+          return tier;
+        });
+      });
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null);
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const activeContainer = findTierId(active.id as string) || "unranked";
+    const overContainer = over.data?.current?.sortable?.containerId || over.id;
+
+    if (activeContainer === overContainer) {
+      // Handle sorting within the same container
+      if (activeContainer === "unranked") {
+        const oldIndex = unrankedItems.findIndex(
+          (item) => item.id === active.id
+        );
+        const newIndex = unrankedItems.findIndex((item) => item.id === over.id);
+        if (oldIndex !== -1 && newIndex !== -1) {
+          setUnrankedItems((items) => arrayMove(items, oldIndex, newIndex));
+        }
+      } else {
+        setTiers((prev) => {
+          return prev.map((tier) => {
+            if (tier.id === activeContainer) {
+              const oldIndex = tier.items.findIndex(
+                (item) => item.id === active.id
+              );
+              const newIndex = tier.items.findIndex(
+                (item) => item.id === over.id
+              );
+              return {
+                ...tier,
+                items: arrayMove(tier.items, oldIndex, newIndex),
+              };
+            }
+            return tier;
+          });
+        });
+      }
+    }
+  };
+
+  const findItem = (id: string): TierItem | undefined => {
+    for (const tier of tiers) {
+      const item = tier.items.find((item) => item.id === id);
+      if (item) return item;
+    }
+    return unrankedItems.find((item) => item.id === id);
+  };
+
+  const findTierId = (itemId: string): string | undefined => {
+    for (const tier of tiers) {
+      if (tier.items.some((item) => item.id === itemId)) {
+        return tier.id;
+      }
+    }
+    return undefined;
+  };
+
+  const handleAddItem = () => {
+    if (newItemUrl && newItemName) {
+      const newItem: TierItem = {
+        id: `item-${Date.now()}`,
+        name: newItemName,
+        imageUrl: newItemUrl,
+      };
+      setUnrankedItems((prev) => [...prev, newItem]);
+      setNewItemUrl("");
+      setNewItemName("");
+      setIsAddingItem(false);
+    }
+  };
+
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragEnd={handleDragEnd}
-      onDragOver={handleDragOver}
-    >
-      <div
-        className="App"
-        style={{ display: "flex", flexDirection: "row", padding: "20px" }}
-      >
-        {columns.map((column) => (
-          <Column
-            key={column.id}
-            id={column.id}
-            title={column.title}
-            cards={column.cards}
-          ></Column>
-        ))}
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8">
+          Tier List Maker
+        </h1>
+
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="space-y-4">
+            {tiers.map((tier) => (
+              <TierRow key={tier.id} tier={tier} />
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Unranked Items
+            </h2>
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <SortableContext
+                id="unranked"
+                items={unrankedItems.map((item) => item.id)}
+                strategy={horizontalListSortingStrategy}
+              >
+                <div className="flex flex-wrap gap-4">
+                  {unrankedItems.map((item) => (
+                    <DraggableItem key={item.id} item={item} />
+                  ))}
+                </div>
+              </SortableContext>
+            </div>
+          </div>
+        </DndContext>
+
+        <div className="mt-8 flex gap-4">
+          {isAddingItem ? (
+            <div className="flex gap-4 items-center">
+              <input
+                type="text"
+                placeholder="Item name"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="text"
+                placeholder="Image URL"
+                value={newItemUrl}
+                onChange={(e) => setNewItemUrl(e.target.value)}
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleAddItem}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+              >
+                Add
+              </button>
+              <button
+                onClick={() => {
+                  setIsAddingItem(false);
+                  setNewItemUrl("");
+                  setNewItemName("");
+                }}
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              onClick={() => setIsAddingItem(true)}
+            >
+              <Plus size={20} />
+              Add Item
+            </button>
+          )}
+          <button
+            className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            onClick={() => {
+              setTiers(initialTiers.map((tier) => ({ ...tier, items: [] })));
+              setUnrankedItems(initialItems);
+            }}
+          >
+            <Trash2 size={20} />
+            Reset
+          </button>
+        </div>
       </div>
-    </DndContext>
+    </div>
   );
 }
+
+export default TierPage;
