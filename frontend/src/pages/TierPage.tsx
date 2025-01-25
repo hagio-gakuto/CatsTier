@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -13,31 +13,11 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Plus, Trash2 } from "lucide-react";
-import { TierList, TierItem, Tier } from "../Type";
+import { Plus, Trash2, Loader2 } from "lucide-react";
+import { TierList, TierItem, Tier, RakutenProduct } from "../Type";
 import { TierRow } from "../components/TierRow";
 import { DraggableItem } from "../components/DraggableItem";
-
-const initialItems: TierItem[] = [
-  {
-    id: "1",
-    name: "Mountain",
-    imageUrl:
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=200&h=200",
-  },
-  {
-    id: "2",
-    name: "Beach",
-    imageUrl:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=200&h=200",
-  },
-  {
-    id: "3",
-    name: "Forest",
-    imageUrl:
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=200&h=200",
-  },
-];
+import { fetchProducts } from "../utils/fetchProductsUtils";
 
 const initialTiers: TierList = [
   { id: "S", label: "S", color: "#FF0000", items: [] },
@@ -49,11 +29,27 @@ const initialTiers: TierList = [
 
 function TierPage() {
   const [tiers, setTiers] = useState<TierList>(initialTiers);
-  const [unrankedItems, setUnrankedItems] = useState<TierItem[]>(initialItems);
+  const [unrankedItems, setUnrankedItems] = useState<TierItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [isAddingItem, setIsAddingItem] = useState(false);
-  const [newItemUrl, setNewItemUrl] = useState("");
-  const [newItemName, setNewItemName] = useState("");
+  const [products, setProducts] = useState<RakutenProduct[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchProducts({ setProducts, setLoading });
+  }, []);
+
+  useEffect(() => {
+    if (products.length > 0) {
+      const items: TierItem[] = products.map((product) => ({
+        id: `item-${Date.now()}-${Math.random()}`,
+        name: product.Item.itemName,
+        imageUrl: product.Item.mediumImageUrls[0]?.imageUrl || "",
+        price: product.Item.itemPrice,
+        url: product.Item.itemUrl,
+      }));
+      setUnrankedItems(items);
+    }
+  }, [products]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -126,7 +122,6 @@ function TierPage() {
     const overContainer = over.data?.current?.sortable?.containerId || over.id;
 
     if (activeContainer === overContainer) {
-      // Handle sorting within the same container
       if (activeContainer === "unranked") {
         const oldIndex = unrankedItems.findIndex(
           (item) => item.id === active.id
@@ -174,26 +169,31 @@ function TierPage() {
     return undefined;
   };
 
-  const handleAddItem = () => {
-    if (newItemUrl && newItemName) {
-      const newItem: TierItem = {
-        id: `item-${Date.now()}`,
-        name: newItemName,
-        imageUrl: newItemUrl,
-      };
-      setUnrankedItems((prev) => [...prev, newItem]);
-      setNewItemUrl("");
-      setNewItemName("");
-      setIsAddingItem(false);
-    }
+  const handleRefresh = () => {
+    setLoading(true);
+    fetchProducts({ setProducts, setLoading });
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          Tier List Maker
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900">
+            Product Tier List
+          </h1>
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
+          >
+            {loading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Plus className="w-5 h-5" />
+            )}
+            Refresh Products
+          </button>
+        </div>
 
         <DndContext
           sensors={sensors}
@@ -209,72 +209,36 @@ function TierPage() {
 
           <div className="mt-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              Unranked Items
+              Unranked Products
             </h2>
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <SortableContext
-                id="unranked"
-                items={unrankedItems.map((item) => item.id)}
-                strategy={horizontalListSortingStrategy}
-              >
-                <div className="flex flex-wrap gap-4">
-                  {unrankedItems.map((item) => (
-                    <DraggableItem key={item.id} item={item} />
-                  ))}
+              {loading ? (
+                <div className="flex justify-center items-center h-24">
+                  <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
                 </div>
-              </SortableContext>
+              ) : (
+                <SortableContext
+                  id="unranked"
+                  items={unrankedItems.map((item) => item.id)}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  <div className="flex flex-wrap gap-4">
+                    {unrankedItems.map((item) => (
+                      <DraggableItem key={item.id} item={item} />
+                    ))}
+                  </div>
+                </SortableContext>
+              )}
             </div>
           </div>
         </DndContext>
 
-        <div className="mt-8 flex gap-4">
-          {isAddingItem ? (
-            <div className="flex gap-4 items-center">
-              <input
-                type="text"
-                placeholder="Item name"
-                value={newItemName}
-                onChange={(e) => setNewItemName(e.target.value)}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="text"
-                placeholder="Image URL"
-                value={newItemUrl}
-                onChange={(e) => setNewItemUrl(e.target.value)}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                onClick={handleAddItem}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-              >
-                Add
-              </button>
-              <button
-                onClick={() => {
-                  setIsAddingItem(false);
-                  setNewItemUrl("");
-                  setNewItemName("");
-                }}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <button
-              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              onClick={() => setIsAddingItem(true)}
-            >
-              <Plus size={20} />
-              Add Item
-            </button>
-          )}
+        <div className="mt-8">
           <button
             className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
             onClick={() => {
               setTiers(initialTiers.map((tier) => ({ ...tier, items: [] })));
-              setUnrankedItems(initialItems);
+              handleRefresh();
             }}
           >
             <Trash2 size={20} />
