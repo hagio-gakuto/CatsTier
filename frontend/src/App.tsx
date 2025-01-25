@@ -17,6 +17,7 @@ import Footer from "./components/Footer";
 import SideMenu from "./components/SideMenu";
 import LoginPage from "./pages/LoginPage";
 import Loading from "./components/Loading";
+import TierPage from "./pages/TierPage";
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -58,6 +59,9 @@ const App: React.FC = () => {
             />
             {/* ログインページ*/}
             <Route path="/login" element={<LoginPage />} />
+
+            {/* ティアページ */}
+            <Route path="tier" element={<TierPage />} />
 
             {/* 存在しないURLは404ページにリダイレクト */}
             <Route path="*" element={<Navigate to="/error/404" replace />} />

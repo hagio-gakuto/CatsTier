@@ -8,13 +8,12 @@ import {
   signInWithRedirect,
   getRedirectResult,
 } from "firebase/auth";
-import { onAuthStateChanged,User } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { signOut } from "firebase/auth";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -28,7 +27,7 @@ const firebaseConfig = {
   storageBucket: "catstier-cd7b5.firebasestorage.app",
   messagingSenderId: "404031314787",
   appId: "1:404031314787:web:e9440cbc849ab64f715156",
-  measurementId: "G-JM1MYCTR5Z"
+  measurementId: "G-JM1MYCTR5Z",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -61,9 +60,10 @@ export const handleRedirectResult = async () => {
   }
 };
 
-
 // ユーザーのログイン状態を監視
-export const observeAuthState = (callback: (user: User | null) => void): void  => {
+export const observeAuthState = (
+  callback: (user: User | null) => void
+): void => {
   onAuthStateChanged(auth, (user) => {
     callback(user);
   });
@@ -79,21 +79,35 @@ export const logOut = async () => {
 };
 
 // 新規ユーザー登録
-export const registerWithEmailAndPassword = async (email:string, password:string) => {
+export const registerWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     console.log("User registered:", userCredential.user);
     return userCredential.user;
-  } catch (error:unknown) {
+  } catch (error: unknown) {
     console.error("Error registering user:", error);
     throw error;
   }
 };
 
 // ログイン処理
-export const loginWithEmailAndPassword = async (email:string, password:string) => {
+export const loginWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     console.log("User logged in:", userCredential.user);
     return userCredential.user;
   } catch (error) {

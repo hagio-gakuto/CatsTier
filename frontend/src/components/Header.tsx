@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,6 +12,9 @@ const Header: React.FC<HeaderProps> = ({ setIsMenuOpen, isLoggedIn }) => {
   const handleNavigate = (path: string) => {
     navigate(path);
   };
+
+  const location = useLocation();
+  // console.log(location.pathname);
 
   return (
     <header className="flex shadow-md h-100 py-4 px-4 sm:px-10 bg-white font-[sans-serif]  tracking-wide relative z-10">
@@ -63,13 +66,25 @@ const Header: React.FC<HeaderProps> = ({ setIsMenuOpen, isLoggedIn }) => {
               />
             </li>
             <li className="max-lg:border-b border-gray-300 max-lg:py-3 px-3">
-              <a className="hover:text-[#007bff] text-[#007bff] block font-semibold text-[15px]">
+              <a
+                className={`block font-semibold text-[15px] ${
+                  location.pathname === "/" ? "text-[#007bff]" : "text-gray-500"
+                } hover:text-[#007bff]`}
+                onClick={() => handleNavigate("/")}
+              >
                 Home
               </a>
             </li>
             <li className="max-lg:border-b border-gray-300 max-lg:py-3 px-3">
-              <a className="hover:text-[#007bff] text-gray-500 block font-semibold text-[15px]">
-                Team
+              <a
+                className={`block font-semibold text-[15px] ${
+                  location.pathname === "/tier"
+                    ? "text-[#007bff]"
+                    : "text-gray-500"
+                } hover:text-[#007bff]`}
+                onClick={() => handleNavigate("/tier")}
+              >
+                Tier
               </a>
             </li>
             <li className="max-lg:border-b border-gray-300 max-lg:py-3 px-3">

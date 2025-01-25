@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 // Generated 2025/01/20 20:57:37 by Hibernate Tools 6.5.1.Final
 
-import java.sql.Date;
 import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
@@ -20,7 +19,7 @@ public class Users implements java.io.Serializable {
 	private LocalDate registeredDate;
 	private Integer deleteFlg;
 	private LocalDate createdDate;
-	private Date updatedDate;
+	private LocalDate updatedDate;
 
 	public Users() {
 	}
@@ -33,7 +32,7 @@ public class Users implements java.io.Serializable {
 
 	public Users(String uid, String userName, Integer petsNum, LocalDate registeredDate, Integer deleteFlg,
 		LocalDate createdDate,
-			Date updatedDate) {
+		LocalDate updatedDate) {
 		this.uid = uid;
 		this.userName = userName;
 		this.petsNum = petsNum;
@@ -91,12 +90,12 @@ public class Users implements java.io.Serializable {
 	    this.createdDate = localDate;
 	}
 
-	public Date getUpdatedDate() {
+	public LocalDate getUpdatedDate() {
 		return this.updatedDate;
 	}
 
-	public void setUpdatedDate(Date updatedDate) {
-		this.updatedDate = updatedDate;
+	public void setUpdatedDate(LocalDate localDate) {
+	    this.updatedDate = localDate;
 	}
 
 }

@@ -21,9 +21,15 @@ public class UsersController {
 
     @PostMapping("/login")
     public ResponseEntity<Boolean> doLogin(@RequestBody UserReqDto dto) {
-	System.out.println("UserController!!!" + dto);
 
 	boolean isNewUser = userService.doLogin(dto);
 	return ResponseEntity.ok(isNewUser);
+    }
+
+    @PostMapping("/registerIConAndUserName")
+    public ResponseEntity<Void> registerIConAndUserName(@RequestBody UserReqDto dto) {
+
+	userService.registerIconAndUserName(dto);
+	return ResponseEntity.noContent().build();
     }
 }

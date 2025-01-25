@@ -1,16 +1,49 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { showToast } from "../utils/toastifyUtils";
 import Cookies from "js-cookie";
-import { useLocation } from "react-router-dom";
+import IntroductionPopup from "../components/IntroductionPopup";
+import axios from "axios";
+import Product from "../components/Product";
 // import { Slider } from "@mui/material";
 
 const TopPage: React.FC = () => {
-  const location = useLocation();
-  const { isNewUser } = location.state || {}; // stateが存在するか確認
+  const [showPopup, setShowPopup] = React.useState(
+    Cookies.get("isNewUser") !== "false" || false
+  );
+  const [products, setProducts] = React.useState<[]>([]);
+  // console.log(Cookies.get("isNewUser"));
+  // console.log(showPopup);
+  console.log(products);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      // setLoading(true);
+      // setError(null);  // エラーメッセージをリセット
 
-  console.log(isNewUser);
+      try {
+        const response = await axios.get(
+          "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706",
+          {
+            params: {
+              applicationId: "1009937209585955269", // 取得したアプリIDを指定
+              keyword: "cat", // 検索する商品名
+              hits: 10, // 取得する商品の数
+            },
+          }
+        );
+        console.log(response);
+        setProducts(response.data.Items); // 商品情報をstateに保存
+      } catch (err) {
+        console.error("Error during fetching products:", err);
+        // setError("商品情報の取得に失敗しました");
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -22,12 +55,16 @@ const TopPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-green-100">
-      <h1 className="text-2xl font-bold">Welcome to Top Page</h1>
+    <div className="min-h-screen bg-green-100">
       {/* <Slider /> */}
-      {isNewUser && (
-        <p className="text-green-500 mt-4">新規ユーザー登録が完了しました！</p>
-      )}
+
+      <div className="flex flex-wrap justify-center">
+        {products.map((product, index) => (
+          <Product key={index} product={product} /> // ここでProductコンポーネントを呼び出している
+        ))}
+      </div>
+
+      {showPopup && <IntroductionPopup setShowPopup={setShowPopup} />}
       <button
         onClick={handleLogout}
         className="mt-4 bg-red-500 text-white py-2 px-4 rounded"

@@ -18,5 +18,6 @@ public class UserReqDto {
     private Integer deleteFlg;
     private Date createdDate;
     private Date updatedDate;
+    private String icon;
 
 }

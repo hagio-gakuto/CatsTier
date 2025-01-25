@@ -9,6 +9,9 @@ public class Const {
     // ユーザー
     // public static final String DEFAULT_USER_NAME = "ユーザー様";
 
+    // 写真
+    public static final int PICTURE_CATEGORY_USER = 1;
+
     // コンストラクタはプライベートにして、インスタンス化を防ぐ
     private Const() {
 	throw new UnsupportedOperationException("定数クラスはインスタンス化できません");
