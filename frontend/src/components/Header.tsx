@@ -88,8 +88,15 @@ const Header: React.FC<HeaderProps> = ({ setIsMenuOpen, isLoggedIn }) => {
               </a>
             </li>
             <li className="max-lg:border-b border-gray-300 max-lg:py-3 px-3">
-              <a className="hover:text-[#007bff] text-gray-500 block font-semibold text-[15px]">
-                Feature
+              <a
+                className={`block font-semibold text-[15px] ${
+                  location.pathname === "/pets"
+                    ? "text-[#007bff]"
+                    : "text-gray-500"
+                } hover:text-[#007bff]`}
+                onClick={() => handleNavigate("/pets")}
+              >
+                Pets
               </a>
             </li>
             <li className="max-lg:border-b border-gray-300 max-lg:py-3 px-3">
@@ -121,7 +128,7 @@ const Header: React.FC<HeaderProps> = ({ setIsMenuOpen, isLoggedIn }) => {
             </button>
           ) : (
             <button
-              onClick={() => handleNavigate("/login")}
+              onClick={() => handleNavigate("/mypage")}
               className="px-4 py-2 text-sm rounded-full font-bold text-gray-500 border-2 bg-transparent hover:bg-gray-50 transition-all ease-in-out duration-300"
             >
               My Page

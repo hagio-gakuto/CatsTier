@@ -18,6 +18,8 @@ import SideMenu from "./components/SideMenu";
 import LoginPage from "./pages/LoginPage";
 import Loading from "./components/Loading";
 import TierPage from "./pages/TierPage";
+import PetsPage from "./pages/PetsPage";
+import MyPage from "./pages/MyPage";
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -62,6 +64,12 @@ const App: React.FC = () => {
 
             {/* ティアページ */}
             <Route path="tier" element={<TierPage />} />
+
+            {/* ペット管理ページ */}
+            <Route path="pets" element={<PetsPage />} />
+
+            {/* マイページ */}
+            <Route path="mypage" element={<MyPage />} />
 
             {/* 存在しないURLは404ページにリダイレクト */}
             <Route path="*" element={<Navigate to="/error/404" replace />} />

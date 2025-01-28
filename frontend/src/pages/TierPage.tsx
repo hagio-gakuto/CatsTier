@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   DndContext,
   DragEndEvent,
   DragOverEvent,
-  DragStartEvent,
+  //   DragStartEvent,
   PointerSensor,
   useSensor,
   useSensors,
@@ -13,11 +13,11 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Plus, Trash2, Loader2 } from "lucide-react";
-import { TierList, TierItem, Tier, RakutenProduct } from "../Type";
+import { TierList, TierItem, RakutenProduct } from "../Type";
 import { TierRow } from "../components/TierRow";
 import { DraggableItem } from "../components/DraggableItem";
-import { fetchProducts } from "../utils/fetchProductsUtils";
+import SearchForm from "../components/SearchForm";
+import Loading from "../components/Loading";
 
 const initialTiers: TierList = [
   { id: "S", label: "S", color: "#FF0000", items: [] },
@@ -30,13 +30,13 @@ const initialTiers: TierList = [
 function TierPage() {
   const [tiers, setTiers] = useState<TierList>(initialTiers);
   const [unrankedItems, setUnrankedItems] = useState<TierItem[]>([]);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  //   const [activeId, setActiveId] = useState<string | null>(null);
   const [products, setProducts] = useState<RakutenProduct[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchProducts({ setProducts, setLoading });
-  }, []);
+  // useEffect(() => {
+  //   fetchProducts({ setProducts, setLoading, });
+  // }, []);
 
   useEffect(() => {
     if (products.length > 0) {
@@ -59,9 +59,9 @@ function TierPage() {
     })
   );
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-  };
+  //   const handleDragStart = (event: DragStartEvent) => {
+  //     setActiveId(event.active.id as string);
+  //   };
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
@@ -113,7 +113,7 @@ function TierPage() {
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    setActiveId(null);
+    // setActiveId(null);
     const { active, over } = event;
 
     if (!over) return;
@@ -169,35 +169,31 @@ function TierPage() {
     return undefined;
   };
 
-  const handleRefresh = () => {
-    setLoading(true);
-    fetchProducts({ setProducts, setLoading });
-  };
+  // const handleRefresh = () => {
+  //   setLoading(true);
+  //   fetchProducts({ setProducts, setLoading });
+  // };
 
+  useEffect(() => {
+    console.log(tiers);
+  }, [tiers]);
+
+  if (loading) {
+    return <Loading message="読み込み中" />;
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">
-            Product Tier List
-          </h1>
-          <button
-            onClick={handleRefresh}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
-          >
-            {loading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Plus className="w-5 h-5" />
-            )}
-            Refresh Products
-          </button>
+      <div className="max-w-6xl ">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold text-gray-900">Food</h1>
+          <div className="flex">
+            <SearchForm setProducts={setProducts} setLoading={setLoading} />
+          </div>
         </div>
 
         <DndContext
           sensors={sensors}
-          onDragStart={handleDragStart}
+          //   onDragStart={handleDragStart}
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
@@ -208,32 +204,24 @@ function TierPage() {
           </div>
 
           <div className="mt-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              Unranked Products
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4"></h2>
             <div className="bg-white p-6 rounded-lg shadow-md">
-              {loading ? (
-                <div className="flex justify-center items-center h-24">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+              <SortableContext
+                id="unranked"
+                items={unrankedItems.map((item) => item.id)}
+                strategy={horizontalListSortingStrategy}
+              >
+                <div className="flex flex-wrap gap-4">
+                  {unrankedItems.map((item) => (
+                    <DraggableItem key={item.id} item={item} />
+                  ))}
                 </div>
-              ) : (
-                <SortableContext
-                  id="unranked"
-                  items={unrankedItems.map((item) => item.id)}
-                  strategy={horizontalListSortingStrategy}
-                >
-                  <div className="flex flex-wrap gap-4">
-                    {unrankedItems.map((item) => (
-                      <DraggableItem key={item.id} item={item} />
-                    ))}
-                  </div>
-                </SortableContext>
-              )}
+              </SortableContext>
             </div>
           </div>
         </DndContext>
 
-        <div className="mt-8">
+        {/* <div className="mt-8">
           <button
             className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
             onClick={() => {
@@ -244,7 +232,7 @@ function TierPage() {
             <Trash2 size={20} />
             Reset
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
