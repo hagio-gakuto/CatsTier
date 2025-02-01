@@ -1,12 +1,156 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
+import Form from "../components/Form";
+import { axiosFunction } from "../utils/axiosUtil";
 
 const PetsPage: React.FC = () => {
   const [showModal, setModal] = useState(false);
+  const [species, setSpecies] = useState([]);
+  const [breeds, setBreeds] = useState([]);
+  const [sex, setSex] = useState([]);
+  const [place, setPlace] = useState([]);
+  const [contraception, setContraception] = useState([]);
+  const [active, setActive] = useState([]);
 
   const toggleModal = () => {
     setModal((prev) => !prev);
   };
+
+  useEffect(() => {
+    const api = "api/options";
+    const speciesData = {
+      categoryType: "種類",
+    };
+    axiosFunction({
+      api,
+      data: speciesData,
+      setResult: setSpecies,
+    });
+
+    const breedsApi = "api/breeds/options";
+    axiosFunction({
+      api: breedsApi,
+      data: {},
+      setResult: setBreeds,
+    });
+
+    const sexData = {
+      categoryType: "性別",
+    };
+    axiosFunction({
+      api,
+      data: sexData,
+      setResult: setSex,
+    });
+
+    const placeData = {
+      categoryType: "飼育場所",
+    };
+    axiosFunction({
+      api,
+      data: placeData,
+      setResult: setPlace,
+    });
+
+    const contraceptionData = {
+      categoryType: "避妊",
+    };
+    axiosFunction({
+      api,
+      data: contraceptionData,
+      setResult: setContraception,
+    });
+
+    const activeData = {
+      categoryType: "活動レベル",
+    };
+    axiosFunction({
+      api,
+      data: activeData,
+      setResult: setActive,
+    });
+  }, []);
+
+  const formField = [
+    {
+      title: "アイコン",
+      type: "img",
+      column: "icon",
+      placeholder: "画像をアップロード",
+      required: true,
+    },
+    {
+      title: "お名前",
+      type: "text",
+      column: "name",
+      placeholder: "ペットの名前",
+      required: true,
+    },
+    {
+      title: "種類",
+      type: "select",
+      column: "species",
+      placeholder: "種類を選んでください",
+      options: species,
+      required: true,
+    },
+    {
+      title: "品種",
+      type: "select",
+      column: "breed",
+      placeholder: "品種を選んでください",
+      options: breeds,
+      required: true,
+    },
+    {
+      title: "生年月日(推定)",
+      type: "date",
+      column: "birthday",
+      placeholder: "生年月日を選んでください",
+    },
+    {
+      title: "性別",
+      type: "select",
+      column: "sex",
+      placeholder: "性別を選んでください",
+      options: sex,
+    },
+    {
+      title: "飼育場所",
+      type: "select",
+      column: "breedingPlace",
+      placeholder: "飼育場所を選んでください",
+      options: place,
+    },
+    {
+      title: "避妊",
+      type: "select",
+      column: "contraception",
+      placeholder: "避妊済みか選んでください",
+      options: contraception,
+    },
+    {
+      title: "体重",
+      type: "number",
+      column: "weight",
+      placeholder: "体重（kg）",
+    },
+    // {
+    //   title: "病気",
+    //   type: "select",
+    //   placeholder: "病気がある場合は選んでください",
+    // },
+    {
+      title: "活動レベル",
+      type: "select",
+      column: "activeLevel",
+      placeholder: "活動レベルを選んでください",
+      options: active,
+    },
+    // { title: "特徴", type: "text", placeholder: "ペットの特徴や性格" },
+  ];
+
+  const formAPI = "api/pet/insert";
 
   return (
     <>
@@ -19,7 +163,7 @@ const PetsPage: React.FC = () => {
         >
           <div className="relative p-4 w-full max-w-2xl max-h-full">
             <div className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-              <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+              <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200 sticky top-0 z-50 bg-slate-50">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                   新しく家族を登録
                 </h3>
@@ -48,36 +192,7 @@ const PetsPage: React.FC = () => {
               </div>
 
               <div className="p-4 md:p-5 space-y-4">
-                <form className="max-w-sm mx-auto">
-                  <label htmlFor="underline_select" className="sr-only">
-                    Underline select
-                  </label>
-                  <select
-                    id="underline_select"
-                    className="block py-2.5 px-2.5 w-full text-sm bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
-                  >
-                    {/* <option selected>Choose a country</option> */}
-                    <option value="US">United States</option>
-                    <option value="US">United States</option>
-                  </select>
-                </form>
-              </div>
-
-              <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                <button
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  onClick={toggleModal}
-                >
-                  I accept
-                </button>
-                <button
-                  type="button"
-                  className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                  onClick={toggleModal}
-                >
-                  Decline
-                </button>
+                <Form formField={formField} formAPI={formAPI} />
               </div>
             </div>
           </div>
