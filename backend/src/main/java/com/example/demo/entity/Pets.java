@@ -3,8 +3,11 @@ package com.example.demo.entity;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 /**
@@ -14,10 +17,12 @@ import jakarta.persistence.Id;
 public class Pets implements java.io.Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String ownerId;
     private String name;
     private int species;
+    private Date birthday;
     private int breed;
     private Integer sex;
     private Integer breedingPlace;
@@ -25,13 +30,13 @@ public class Pets implements java.io.Serializable {
     private BigDecimal weight;
     private Integer activeLevel;
     private int deleteFlg;
-    private Date createdDate;
-    private Date updatedDate;
+    private LocalDate createdDate;
+    private LocalDate updatedDate;
 
     public Pets() {
     }
 
-    public Pets(long id, String ownerId, String name, int species, int breed, int deleteFlg, Date createdDate) {
+    public Pets(long id, String ownerId, String name, int species, int breed, int deleteFlg, LocalDate createdDate) {
 	this.id = id;
 	this.ownerId = ownerId;
 	this.name = name;
@@ -42,8 +47,8 @@ public class Pets implements java.io.Serializable {
     }
 
     public Pets(long id, String ownerId, String name, int species, int breed, Integer sex, Integer breedingPlace,
-	    Integer contraception, BigDecimal weight, Integer activeLevel, int deleteFlg, Date createdDate,
-	    Date updatedDate) {
+	    Integer contraception, BigDecimal weight, Integer activeLevel, int deleteFlg, LocalDate createdDate,
+	    LocalDate updatedDate) {
 	this.id = id;
 	this.ownerId = ownerId;
 	this.name = name;
@@ -89,6 +94,14 @@ public class Pets implements java.io.Serializable {
 
     public void setSpecies(int species) {
 	this.species = species;
+    }
+
+    public Date getBirthday() {
+	return this.birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+	this.birthday = birthday;
     }
 
     public int getBreed() {
@@ -147,19 +160,19 @@ public class Pets implements java.io.Serializable {
 	this.deleteFlg = deleteFlg;
     }
 
-    public Date getCreatedDate() {
+    public LocalDate getCreatedDate() {
 	return this.createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-	this.createdDate = createdDate;
+    public void setCreatedDate(LocalDate localDate) {
+	this.createdDate = localDate;
     }
 
-    public Date getUpdatedDate() {
+    public LocalDate getUpdatedDate() {
 	return this.updatedDate;
     }
 
-    public void setUpdatedDate(Date updatedDate) {
+    public void setUpdatedDate(LocalDate updatedDate) {
 	this.updatedDate = updatedDate;
     }
 

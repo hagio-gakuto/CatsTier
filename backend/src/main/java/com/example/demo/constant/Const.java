@@ -12,6 +12,9 @@ public class Const {
     // 写真
     public static final int PICTURE_CATEGORY_USER = 1;
 
+    // エラー
+    public static final String NOT_UID_MSG = "UIDがありません。";
+
     // コンストラクタはプライベートにして、インスタンス化を防ぐ
     private Const() {
 	throw new UnsupportedOperationException("定数クラスはインスタンス化できません");

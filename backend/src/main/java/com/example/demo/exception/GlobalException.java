@@ -2,7 +2,6 @@ package com.example.demo.exception;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,8 +10,6 @@ import jakarta.validation.ConstraintViolationException;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -26,14 +23,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.example.demo.constant.Const;
 import com.example.demo.dto.ErrorResDto;
 
 @RestControllerAdvice
 public class GlobalException extends ResponseEntityExceptionHandler {
-	
-	// エラーメッセージ設定
-	@Autowired
-	private MessageSource messageSource;
 	
 	// ログ設定
 	private static final Logger logger = LoggerFactory.getLogger(GlobalException.class);
@@ -155,8 +149,8 @@ public class GlobalException extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleAllException(Exception ex) {
 		ErrorResDto errorResponse = new ErrorResDto();
 		errorResponse.setErrorCategory("INTERNAL_SERVER_ERROR");
-		String errorMessage = messageSource.getMessage("BE0007", null, Locale.JAPAN);
-		errorResponse.setErrorMsg(Collections.singletonMap("common", errorMessage));
+//		String errorMessage = messageSource.getMessage("BE0007", null, Locale.JAPAN);
+		errorResponse.setErrorMsg(Collections.singletonMap("common", Const.NOT_UID_MSG));
 		
 		// ログ出力
 		logger.error("500レスポンスエラー", ex);

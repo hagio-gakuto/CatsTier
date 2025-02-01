@@ -31,10 +31,7 @@ public class TableMasterService {
 	List<TableMasterOptionResDto> res = new ArrayList<>();
 	res.add(new TableMasterOptionResDto(0, "未選択"));
 
-//	res = response.stream().map(this::entityToTableMasterOptionResDto)
-//		.collect(Collectors.toList());
-
-	res.addAll(response.stream().map(this::entityToTableMasterOptionResDto) // Assuming you have this mapping method
+	res.addAll(response.stream().map(this::entityToTableMasterOptionResDto)
 		.collect(Collectors.toList()));
 
 	return res;

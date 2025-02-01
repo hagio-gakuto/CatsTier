@@ -71,10 +71,9 @@ public class UserService {
 	if (!isUid(dto.getUid())) {
 	    throw new GeneralException("エラー");
 	}
-	System.out.println(dto.getUserName());
 
 	// ユーザーネームを更新
-	int updatedCount = userRepoCustom.updateUserName(dto.getUid(), dto.getUserName(), LocalDate.now());
+	userRepoCustom.updateUserName(dto.getUid(), dto.getUserName(), LocalDate.now());
 	// 写真サービスでアイコン処理
 	pictureService.registerIcon(Const.PICTURE_CATEGORY_USER, dto.getUid(), dto.getIcon());
 

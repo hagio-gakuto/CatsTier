@@ -4,6 +4,7 @@ import { getMessage } from "../utils/messageUtils";
 import CloseIcon from "@mui/icons-material/Close";
 import InputError from "./InputError";
 import Cookies from "js-cookie";
+import { axiosFunction } from "../utils/axiosUtil";
 
 type options = {
   value: string;
@@ -56,10 +57,15 @@ const Form: React.FC<FormProps> = ({ formField, formAPI }) => {
   } = useForm<Inputs>();
 
   const onSubmit = async (data: Inputs) => {
-    console.log(formAPI);
     data.icon = previewSrc as string;
     data.uid = Cookies.get("uid") as string;
-    console.log(data);
+    // console.log(data);
+
+    await axiosFunction({
+      api: formAPI,
+      data,
+      setResult: () => {},
+    });
     // fetchProducts({ setProducts, setLoading, keyword: data.search });
   };
 

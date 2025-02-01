@@ -150,10 +150,12 @@ const PetsPage: React.FC = () => {
     // { title: "特徴", type: "text", placeholder: "ペットの特徴や性格" },
   ];
 
-  const formAPI = "api/pet/insert";
+  const formAPI = "api/pet/save";
 
   return (
     <>
+      <div></div>
+
       {/* モーダルが表示される条件 */}
       {showModal && (
         <div

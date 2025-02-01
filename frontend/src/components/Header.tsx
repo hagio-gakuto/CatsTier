@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ setIsMenuOpen, isLoggedIn }) => {
       <div className="flex flex-wrap items-center justify-between gap-5 w-full">
         {/* <MenuIcon onClick={() => setIsMenuOpen((prev) => !prev)} /> */}
 
-        <img src="../assets/logo.png" alt="logo" className="w-9" />
+        <img src="../" alt="logo" className="w-9" />
 
         <div
           id="collapseMenu"
@@ -89,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({ setIsMenuOpen, isLoggedIn }) => {
                 Pets
               </a>
             </li>
-            <li className="max-lg:border-b border-gray-300 max-lg:py-3 px-3">
+            {/* <li className="max-lg:border-b border-gray-300 max-lg:py-3 px-3">
               <a className="hover:text-[#007bff] text-gray-500 block font-semibold text-[15px]">
                 Blog
               </a>
@@ -103,7 +103,7 @@ const Header: React.FC<HeaderProps> = ({ setIsMenuOpen, isLoggedIn }) => {
               <a className="hover:text-[#007bff] text-gray-500 block font-semibold text-[15px]">
                 Contact
               </a>
-            </li>
+            </li> */}
           </ul>
         </div>
 

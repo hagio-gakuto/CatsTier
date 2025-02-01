@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,8 +26,11 @@ public class BreedsService {
     public List<BreedsOptionResDto> getOptions() {
 	List<Breeds> response = breedRepository.findAll();
 
-	List<BreedsOptionResDto> res = response.stream().map(this::entityToBreedsOptionResDto)
-		.collect(Collectors.toList());
+	List<BreedsOptionResDto> res = new ArrayList<>();
+	res.add(new BreedsOptionResDto(0, "未選択", 1, ""));
+	res.add(new BreedsOptionResDto(0, "未選択", 2, ""));
+
+	res.addAll(response.stream().map(this::entityToBreedsOptionResDto).collect(Collectors.toList()));
 
 	return res;
 
