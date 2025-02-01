@@ -20,10 +20,19 @@ import Loading from "./components/Loading";
 import TierPage from "./pages/TierPage";
 import PetsPage from "./pages/PetsPage";
 import MyPage from "./pages/MyPage";
+import PetIcon from "./components/PetIcon";
+import { fetchUserPets } from "./utils/fetchUserPetsUtil";
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userPets, setUserPets] = useState([]);
+
+  useEffect(() => {
+    fetchUserPets({ setUserPets });
+  }, []);
+
+  // console.log(userPets);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -52,6 +61,8 @@ const App: React.FC = () => {
               <SideMenu setIsMenuOpen={setIsMenuOpen} />
             </div>
           )}
+
+          <PetIcon />
 
           <Routes>
             {/* ログイン済みの場合のみトップページにアクセス可能 */}

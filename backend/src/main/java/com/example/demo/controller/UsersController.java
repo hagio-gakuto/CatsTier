@@ -32,4 +32,5 @@ public class UsersController {
 	userService.registerIconAndUserName(dto);
 	return ResponseEntity.noContent().build();
     }
+
 }

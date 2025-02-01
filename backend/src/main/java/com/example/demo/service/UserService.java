@@ -69,14 +69,15 @@ public class UserService {
     @Transactional
     public void registerIconAndUserName(UserReqDto dto) {
 	if (!isUid(dto.getUid())) {
-	    throw new GeneralException("エラー");
+	    throw new GeneralException(Const.NOT_UID_MSG);
 	}
-
 	// ユーザーネームを更新
 	userRepoCustom.updateUserName(dto.getUid(), dto.getUserName(), LocalDate.now());
 	// 写真サービスでアイコン処理
 	pictureService.registerIcon(Const.PICTURE_CATEGORY_USER, dto.getUid(), dto.getIcon());
 
     }
+
+
 
 }

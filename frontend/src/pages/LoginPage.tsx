@@ -26,6 +26,7 @@ type Inputs = {
 
 const LoginPage: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,19 +126,6 @@ const LoginPage: React.FC = () => {
       console.error("Error during email auth:", error);
     }
   };
-
-  // const handleGuestLogin = async () => {
-  //   // setError(null);
-  //   try {
-  //     const user = await guestLogin();
-  //     console.log("Logged in as guest:", user);
-  //     alert("Guest login successful");
-  //     // ここでトップページなどにリダイレクト
-  //   } catch (err: unknown) {
-  //     console.error("Error during guest login:", err);
-  //     // setError(err.message);
-  //   }
-  // };
 
   //ユーザー登録
   const handleRegister = async (data: Inputs) => {
