@@ -1,27 +1,31 @@
-import React from "react";
-
-// import PetsScroll from "./PetsScroll";
+// PetDetail.tsx
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserPets } from "../redux/petsSlice"; // fetchUserPetsアクション
+import { RootState } from "../redux/store"; // RootStateのインポート
 import { Pet } from "../Type";
-import { UserPets } from "../utils/fetchUserPetsUtil";
 
 const PetDetail: React.FC = () => {
-  //   const [pets, setPets] = useState([]);
+  const dispatch = useDispatch();
+  const { pets, loading } = useSelector((state: RootState) => state.pets);
 
-  //   useEffect(() => {
-  //     console.log("aaa");
-  //     console.log(Cookies.get("userPets"));
-  //     setPets(
-  //       Cookies.get("userPets")
-  //         ? JSON.parse(Cookies.get("userPets") as string)
-  //         : null
-  //     );
-  //   }, []);
+  // ペットデータを取得するためにコンポーネントがマウントされたときに実行
+  useEffect(() => {
+    if (pets.length === 0) {
+      dispatch(fetchUserPets()); // ペットデータを取得
+    }
+  }, [dispatch, pets.length]);
+
+  if (loading) {
+    return <div>Loading...</div>; // ローディング中は表示
+  }
 
   return (
-    <>
-      <div className="">
-        {UserPets &&
-          UserPets.filter((p: Pet) => p.active).map((p: Pet) => (
+    <div>
+      {pets &&
+        pets
+          .filter((p: Pet) => p.active)
+          .map((p: Pet) => (
             <div
               key={p.id}
               className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
@@ -65,12 +69,8 @@ const PetDetail: React.FC = () => {
               </div>
             </div>
           ))}
-      </div>
-    </>
+    </div>
   );
-
-  // pathが"/pets"の場合は何も表示しない
-  return null;
 };
 
 export default PetDetail;

@@ -21,24 +21,14 @@ import TierPage from "./pages/TierPage";
 import PetsPage from "./pages/PetsPage";
 import MyPage from "./pages/MyPage";
 import PetIcon from "./components/PetIcon";
-import { fetchUserPets } from "./utils/fetchUserPetsUtil";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 // import Cookies from "js-cookie";
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchUserPets({ setLoading });
-  }, []);
-
-  // const userPets = Cookies.get("userPets")
-  //   ? JSON.parse(Cookies.get("userPets") as string)
-  //   : null;
-  // console.log(userPets);
-
-  // console.log(userPets);
+  // const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -52,58 +42,56 @@ const App: React.FC = () => {
     return <Loading message="ログイン情報確認中" />;
   }
 
-  if (loading) {
-    return <Loading message="ペット情報取得中" />;
-  }
-
   return (
-    <div className="container">
-      <ToastContainer />
+    <Provider store={store}>
+      <div className="container">
+        <ToastContainer />
 
-      <div className="main min-h-dvh bg-gray-100">
-        <Router>
-          <div className="header">
-            <Header setIsMenuOpen={setIsMenuOpen} isLoggedIn={isLoggedIn} />
-          </div>
-
-          {isMenuOpen && (
-            <div className="side-menu z-50">
-              <SideMenu setIsMenuOpen={setIsMenuOpen} />
+        <div className="main min-h-dvh bg-gray-100">
+          <Router>
+            <div className="header">
+              <Header setIsMenuOpen={setIsMenuOpen} isLoggedIn={isLoggedIn} />
             </div>
-          )}
-          <>
-            <PetIcon />
-          </>
 
-          <Routes>
-            {/* ログイン済みの場合のみトップページにアクセス可能 */}
-            <Route
-              path="/" // ルートパス
-              element={<TopPage />} // トップページを表示
-            />
-            {/* ログインページ*/}
-            <Route path="/login" element={<LoginPage />} />
+            {isMenuOpen && (
+              <div className="side-menu z-50">
+                <SideMenu setIsMenuOpen={setIsMenuOpen} />
+              </div>
+            )}
+            <>
+              <PetIcon />
+            </>
 
-            {/* ティアページ */}
-            <Route path="tier" element={<TierPage />} />
+            <Routes>
+              {/* ログイン済みの場合のみトップページにアクセス可能 */}
+              <Route
+                path="/" // ルートパス
+                element={<TopPage />} // トップページを表示
+              />
+              {/* ログインページ*/}
+              <Route path="/login" element={<LoginPage />} />
 
-            {/* ペット管理ページ */}
-            <Route path="pets" element={<PetsPage />} />
+              {/* ティアページ */}
+              <Route path="tier" element={<TierPage />} />
 
-            {/* マイページ */}
-            <Route path="mypage" element={<MyPage />} />
+              {/* ペット管理ページ */}
+              <Route path="pets" element={<PetsPage />} />
 
-            {/* 存在しないURLは404ページにリダイレクト */}
-            <Route path="*" element={<Navigate to="/error/404" replace />} />
-            <Route path="/error/:statusCode" element={<ErrorPage />} />
-          </Routes>
-        </Router>
+              {/* マイページ */}
+              <Route path="mypage" element={<MyPage />} />
+
+              {/* 存在しないURLは404ページにリダイレクト */}
+              <Route path="*" element={<Navigate to="/error/404" replace />} />
+              <Route path="/error/:statusCode" element={<ErrorPage />} />
+            </Routes>
+          </Router>
+        </div>
+
+        <div className="footer">
+          <Footer />
+        </div>
       </div>
-
-      <div className="footer">
-        <Footer />
-      </div>
-    </div>
+    </Provider>
   );
 };
 
