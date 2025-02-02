@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import Form from "../components/Form";
 import { axiosFunction } from "../utils/axiosUtil";
+import PetsScroll from "../components/PetsScroll";
+import PetDetail from "../components/PetDetail";
 
 const PetsPage: React.FC = () => {
   const [showModal, setModal] = useState(false);
@@ -154,7 +156,11 @@ const PetsPage: React.FC = () => {
 
   return (
     <>
-      <div></div>
+      <div className="my-4">
+        <PetsScroll />
+      </div>
+
+      <PetDetail />
 
       {/* モーダルが表示される条件 */}
       {showModal && (

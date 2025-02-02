@@ -22,9 +22,10 @@ export const axiosFunction = async <T,>({
 
     if (response.data) {
       setResult(response.data); // 成功時に取得したデータをセット
-    } else {
-      console.log("No data received");
     }
+    // else {
+    //   console.log("No data received");
+    // }
   } catch (error) {
     showToast("error", getMessage("BE0007")); // エラーハンドリング
     console.error(error);

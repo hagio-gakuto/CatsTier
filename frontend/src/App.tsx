@@ -22,15 +22,21 @@ import PetsPage from "./pages/PetsPage";
 import MyPage from "./pages/MyPage";
 import PetIcon from "./components/PetIcon";
 import { fetchUserPets } from "./utils/fetchUserPetsUtil";
+// import Cookies from "js-cookie";
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userPets, setUserPets] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchUserPets({ setUserPets });
+    fetchUserPets({ setLoading });
   }, []);
+
+  // const userPets = Cookies.get("userPets")
+  //   ? JSON.parse(Cookies.get("userPets") as string)
+  //   : null;
+  // console.log(userPets);
 
   // console.log(userPets);
 
@@ -44,6 +50,10 @@ const App: React.FC = () => {
   if (isLoggedIn === null) {
     // ログイン状態がまだ確認されていない場合、ローディングを表示
     return <Loading message="ログイン情報確認中" />;
+  }
+
+  if (loading) {
+    return <Loading message="ペット情報取得中" />;
   }
 
   return (
@@ -61,8 +71,9 @@ const App: React.FC = () => {
               <SideMenu setIsMenuOpen={setIsMenuOpen} />
             </div>
           )}
-
-          <PetIcon />
+          <>
+            <PetIcon />
+          </>
 
           <Routes>
             {/* ログイン済みの場合のみトップページにアクセス可能 */}

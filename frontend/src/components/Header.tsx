@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ setIsMenuOpen, isLoggedIn }) => {
         <div className="flex flex-wrap items-center justify-between gap-5 w-full">
           {/* <MenuIcon onClick={() => setIsMenuOpen((prev) => !prev)} /> */}
 
-          <img src="../" alt="logo" className="w-9" />
+          <img src="/img/logo.png" alt="logo" className="w-9" />
 
           <div
             id="collapseMenu"

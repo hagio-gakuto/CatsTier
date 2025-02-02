@@ -186,9 +186,6 @@ function TierPage() {
       <div className="max-w-6xl ">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900">Food</h1>
-          <div className="flex">
-            <SearchForm setProducts={setProducts} setLoading={setLoading} />
-          </div>
         </div>
 
         <DndContext
@@ -204,8 +201,10 @@ function TierPage() {
           </div>
 
           <div className="mt-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4"></h2>
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex">
+              <SearchForm setProducts={setProducts} setLoading={setLoading} />
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md min-h-32 mt-4">
               <SortableContext
                 id="unranked"
                 items={unrankedItems.map((item) => item.id)}

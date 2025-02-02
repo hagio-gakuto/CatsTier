@@ -32,7 +32,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ setProducts, setLoading }) => {
     console.log(errors);
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)} className="max-w-md">
+    <form onSubmit={handleSubmit(onSubmit, onError)} className="w-48">
       <label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -61,7 +61,8 @@ const SearchForm: React.FC<SearchFormProps> = ({ setProducts, setLoading }) => {
         <input
           type="search"
           id="default-search"
-          className=" p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-3xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="min-w-80 p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-3xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500
+           dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Search..."
           required
           {...register("search", {
