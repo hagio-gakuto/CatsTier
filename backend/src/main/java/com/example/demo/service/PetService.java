@@ -69,9 +69,9 @@ public class PetService {
 	List<UserPetsResDto> dto = pets.stream().map(this::entityToUserPetsResDto)
 		.collect(Collectors.toList());
 
-	if (dto.size() > 0) {
-	    dto.get(0).setActive(true);
-	}
+//	if (dto.size() > 0) {
+//	    dto.get(0).setActive(true);
+//	}
 
 	return dto;
     }

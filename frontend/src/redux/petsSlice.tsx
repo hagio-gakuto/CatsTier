@@ -7,11 +7,13 @@ import axios from "axios";
 interface PetsState {
   pets: Pet[];
   loading: boolean;
+  activePetId: number | null; // activeなペットのIDを保持
 }
 
 const initialState: PetsState = {
   pets: [],
   loading: false,
+  activePetId: null, // 初期状態ではアクティブなペットは無し
 };
 
 const petsSlice = createSlice({
@@ -20,15 +22,17 @@ const petsSlice = createSlice({
   reducers: {
     setPets(state, action: PayloadAction<Pet[]>) {
       state.pets = action.payload;
+      if (action.payload.length > 0) {
+        // 最初のペットをアクティブにする
+        state.activePetId = action.payload[0].id;
+      }
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
     changeActivePet(state, action: PayloadAction<number>) {
       const petId = action.payload;
-      state.pets.forEach((pet) => {
-        pet.active = pet.id === petId;
-      });
+      state.activePetId = petId;
     },
   },
 });
@@ -53,7 +57,6 @@ export const fetchUserPets = () => async (dispatch: AppDispatch) => {
   } catch (error) {
     dispatch(setLoading(false));
     console.error(error);
-    // ここにエラーハンドリングの処理を追加する
   } finally {
     dispatch(setLoading(false));
   }

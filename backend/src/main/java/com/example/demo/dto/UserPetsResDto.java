@@ -15,7 +15,7 @@ public class UserPetsResDto {
 
     private long id;
     private String name;
-    private boolean isActive;
+//    private boolean isActive;
     private int species;
     private String speciesName;
     private Date birthday;

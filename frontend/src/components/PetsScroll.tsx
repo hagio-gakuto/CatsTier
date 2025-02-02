@@ -1,4 +1,3 @@
-// PetsScroll.tsx
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeActivePet } from "../redux/petsSlice"; // changeActivePetアクションをインポート
@@ -7,10 +6,10 @@ import { Pet } from "../Type";
 
 const PetsScroll: React.FC = () => {
   const dispatch = useDispatch();
-  const pets = useSelector((state: RootState) => state.pets.pets); // petsをReduxストアから取得
+  const { pets, activePetId } = useSelector((state: RootState) => state.pets); // pets と activePetId を取得
 
   const handleActivePetChange = (id: number) => {
-    dispatch(changeActivePet(id)); // activeを切り替えるアクションをディスパッチ
+    dispatch(changeActivePet(id)); // アクションをディスパッチ
   };
 
   return (
@@ -20,7 +19,7 @@ const PetsScroll: React.FC = () => {
           <div
             key={p.id}
             className={`w-32 h-20 cursor-pointer flex justify-center items-center bg-gray-200 ${
-              p.active ? "border-2 border-cyan-400" : ""
+              p.id === activePetId ? "border-2 border-cyan-400" : ""
             }`}
             onClick={() => handleActivePetChange(p.id)} // クリックでアクションをディスパッチ
           >

@@ -4,10 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUserPets } from "../redux/petsSlice"; // fetchUserPetsアクション
 import { RootState } from "../redux/store"; // RootStateのインポート
 import { Pet } from "../Type";
+import { AppDispatch } from "../redux/store";
+import Loading from "./Loading";
 
 const PetDetail: React.FC = () => {
-  const dispatch = useDispatch();
-  const { pets, loading } = useSelector((state: RootState) => state.pets);
+  const dispatch = useDispatch<AppDispatch>();
+  const { pets, loading, activePetId } = useSelector(
+    (state: RootState) => state.pets
+  );
 
   // ペットデータを取得するためにコンポーネントがマウントされたときに実行
   useEffect(() => {
@@ -17,14 +21,14 @@ const PetDetail: React.FC = () => {
   }, [dispatch, pets.length]);
 
   if (loading) {
-    return <div>Loading...</div>; // ローディング中は表示
+    return <Loading message="ペット情報を取得中" />; // ローディング中は表示
   }
 
   return (
     <div>
       {pets &&
         pets
-          .filter((p: Pet) => p.active)
+          .filter((p: Pet) => p.id === activePetId)
           .map((p: Pet) => (
             <div
               key={p.id}

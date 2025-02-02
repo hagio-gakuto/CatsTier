@@ -1,12 +1,28 @@
-// store.ts
 import { configureStore } from "@reduxjs/toolkit";
-import petsReducer from "./petsSlice";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage"; // localStorageを使用
+import petsReducer from "./petsSlice"; // petsSlice
 
-export const store = configureStore({
+const persistConfig = {
+  key: "root",
+  storage, // localStorageを使用
+};
+
+const persistedReducer = persistReducer(persistConfig, petsReducer);
+
+// ストアを作成
+const store = configureStore({
   reducer: {
-    pets: petsReducer,
+    pets: persistedReducer, // petsReducerを永続化
   },
 });
 
+// RootState 型を定義
 export type RootState = ReturnType<typeof store.getState>;
+
+// AppDispatch 型を定義
 export type AppDispatch = typeof store.dispatch;
+
+export const persistor = persistStore(store);
+
+export default store;
