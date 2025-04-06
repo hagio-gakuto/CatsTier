@@ -7,6 +7,7 @@ import axios from "axios";
 import { showToast } from "../utils/toastifyUtils";
 import Cookies from "js-cookie";
 import Loading from "./Loading";
+import { axiosFunction } from "../utils/axiosUtil";
 
 type Inputs = {
   icon: string;
@@ -61,7 +62,13 @@ const IconAndUserNameRegisterForm: React.FC<
   const registerIConAndUserName = async (data: Inputs) => {
     // サーバーにデータを送信
     try {
-      await axios.post("/api/registerIConAndUserName", data);
+      //await axios.post("/api/registerIConAndUserName", data);
+      axiosFunction({
+        api: "api/user",
+        data: data,
+        setResult: () => {},
+        method: "put",
+      });
       // console.log(response);
       setLoading(false);
       showToast("success", getMessage("BS0001", { do: "登録" }));
@@ -95,6 +102,7 @@ const IconAndUserNameRegisterForm: React.FC<
             encType="multipart/form-data"
             className=" w-full"
           >
+            <h3>ユーザーネームを登録（ほかのユーザーにも表示されます）</h3>
             アイコン
             {/* プレビュー画像 */}
             {previewSrc ? (

@@ -31,7 +31,8 @@ const IntroductionPopup: React.FC<IntroductionPopupProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+      {/* ポップアップのコンテンツ */}
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
         <IntroductionPopupContent
           page={page}
@@ -42,8 +43,12 @@ const IntroductionPopup: React.FC<IntroductionPopupProps> = ({
           {/* 戻るボタン */}
           <button
             onClick={prevPage}
-            className="bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 disabled:opacity-50"
-            disabled={page === 0}
+            className={`py-2 px-4 rounded-lg text-white ${
+              disabled
+                ? "bg-gray-400 cursor-not-allowed" // disabled のとき
+                : "bg-blue-600 hover:bg-blue-700" // enabled のとき
+            }`}
+            disabled={page === 0 || disabled} // 最初のページでは無効化
           >
             戻る
           </button>

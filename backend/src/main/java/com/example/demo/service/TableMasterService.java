@@ -9,7 +9,6 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.TableMasterOptionReqDto;
 import com.example.demo.dto.TableMasterOptionResDto;
 import com.example.demo.entity.TableMaster;
 import com.example.demo.repository.TableMasterCustomRepository;
@@ -30,8 +29,8 @@ public class TableMasterService {
 
 
     @Transactional
-    public List<TableMasterOptionResDto> getOptions(TableMasterOptionReqDto dto) {
-	List<TableMaster> response = tableMasterCustomRepository.getOptions(dto.getCategoryType());
+    public List<TableMasterOptionResDto> getOptions(String categoryType) {
+	List<TableMaster> response = tableMasterCustomRepository.getOptions(categoryType);
 	
 	List<TableMasterOptionResDto> res = new ArrayList<>();
 	res.add(new TableMasterOptionResDto(0, "未選択"));
@@ -58,6 +57,18 @@ public class TableMasterService {
 	}
 	Optional<TableMaster> entity = tableMasterRepository.findById((long) id);
 	return entity.map(TableMaster::getName).orElse(null);
+    }
+
+    // getTierCategory
+    @Transactional
+    public List<String> getTierCategory() {
+	List<TableMaster> response = tableMasterCustomRepository.getOptions("tierカテゴリ");
+	// それぞれのエンティティから name を抽出してリストに変換
+	return response.stream().map(this::entityToString).collect(Collectors.toList());
+    }
+
+    private String entityToString(TableMaster entity) {
+	return entity.getName();
     }
 
 

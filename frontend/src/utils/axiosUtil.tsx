@@ -12,15 +12,26 @@ export const axiosFunction = async <T,>({
   setResult,
   data,
   api,
+  method,
 }: {
   setResult: React.Dispatch<React.SetStateAction<T>>; // setResultはジェネリック型Tを受け取る
   data: Data; // APIに送信するデータ
   api: string; // APIエンドポイント
+  method: string;
 }) => {
   try {
-    const response = await axios.post(api, data);
+    let response; // レスポンスの型をジェネリック型Tに設定
+    if (method === "get") {
+      response = await axios.get(api, { params: data });
+    } else if (method === "post") {
+      response = await axios.post(api, data);
+    } else if (method === "put") {
+      response = await axios.put(api, data);
+    } else if (method === "delete") {
+      response = await axios.delete(api, { data });
+    }
 
-    if (response.data) {
+    if (response && response.data) {
       setResult(response.data); // 成功時に取得したデータをセット
     }
     // else {

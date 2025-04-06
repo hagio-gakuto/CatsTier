@@ -1,23 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import Cookies from "js-cookie";
 // import PetsScroll from "./PetsScroll";
 import { Pet } from "../Type";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserPets } from "../redux/petsSlice"; // fetchUserPetsアクション
+import { AppDispatch } from "../redux/store";
+import { RootState } from "../redux/store";
 
 const PetIcon: React.FC = () => {
   const location = useLocation();
   const path = location.pathname;
-  const [pets, setPets] = useState([]);
   // const [showAllPets, setShowAllPets] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { pets, activePetId } = useSelector((state: RootState) => state.pets);
 
+  // ペットデータを取得するためにコンポーネントがマウントされたときに実行
   useEffect(() => {
-    setPets(
-      Cookies.get("userPets")
-        ? JSON.parse(Cookies.get("userPets") as string)
-        : null
-    );
-    Cookies.remove("userPets");
-  }, []);
+    if (pets.length === 0) {
+      dispatch(fetchUserPets()); // ペットデータを取得
+    }
+  }, [dispatch, pets.length]);
 
   const handlePet = () => {
     // setShowAllPets((prev) => !prev);
@@ -27,18 +29,18 @@ const PetIcon: React.FC = () => {
   if (path !== "/pets") {
     return (
       <>
-        <div className="fixed z-50 bottom-8 right-4 w-40 h-40 overflow-auto">
+        <div className="fixed z-50 bottom-10 right-10 w-20 h-20 ">
           {/* <div className="bg-black bottom-60">
             {showAllPets && <PetsScroll />}
           </div> */}
           <div
-            className="absolute bottom-0 border-2 cursor-pointer w-20 h-20 text-center bg-amber-200
+            className="cursor-pointer w-20 h-20 text-center bg-amber-200
          align-middle flex justify-center items-center transition-all ease-in-out duration-300 hover:opacity-30"
             onClick={handlePet}
           >
             {pets &&
               pets
-                .filter((p: Pet) => p.active)
+                .filter((p: Pet) => p.id === activePetId)
                 .map((p: Pet) => <div key={p.id}>{p.name}</div>)}
           </div>
         </div>

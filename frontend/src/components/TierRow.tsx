@@ -19,7 +19,7 @@ export function TierRow({ tier }: Props) {
   return (
     <div className="flex items-center w-full mb-4">
       <div
-        className="w-24 h-24 flex items-center justify-center text-white font-bold text-2xl rounded-lg mr-4"
+        className="w-16 h-24 flex items-center justify-center text-white font-bold text-2xl rounded-lg mr-4"
         style={{ backgroundColor: tier.color }}
       >
         {tier.label}

@@ -19,14 +19,16 @@ const PetsPage: React.FC = () => {
   };
 
   useEffect(() => {
+    // 種類のオプションを取得するためのAPIリクエスト
     const api = "api/options";
     const speciesData = {
       categoryType: "種類",
     };
     axiosFunction({
-      api,
+      api: api,
       data: speciesData,
       setResult: setSpecies,
+      method: "get",
     });
 
     const breedsApi = "api/breeds/options";
@@ -34,42 +36,47 @@ const PetsPage: React.FC = () => {
       api: breedsApi,
       data: {},
       setResult: setBreeds,
+      method: "get",
     });
 
     const sexData = {
       categoryType: "性別",
     };
     axiosFunction({
-      api,
+      api: api,
       data: sexData,
       setResult: setSex,
+      method: "get",
     });
 
     const placeData = {
       categoryType: "飼育場所",
     };
     axiosFunction({
-      api,
+      api: api,
       data: placeData,
       setResult: setPlace,
+      method: "get",
     });
 
     const contraceptionData = {
       categoryType: "避妊",
     };
     axiosFunction({
-      api,
+      api: api,
       data: contraceptionData,
       setResult: setContraception,
+      method: "get",
     });
 
     const activeData = {
       categoryType: "活動レベル",
     };
     axiosFunction({
-      api,
+      api: api,
       data: activeData,
       setResult: setActive,
+      method: "get",
     });
   }, []);
 

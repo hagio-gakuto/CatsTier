@@ -18,6 +18,9 @@ import { TierRow } from "../components/TierRow";
 import { DraggableItem } from "../components/DraggableItem";
 import SearchForm from "../components/SearchForm";
 import Loading from "../components/Loading";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import CategoryIcon from "@mui/icons-material/Category";
+import { axiosFunction } from "../utils/axiosUtil";
 
 const initialTiers: TierList = [
   { id: "S", label: "S", color: "#FF0000", items: [] },
@@ -33,10 +36,27 @@ function TierPage() {
   //   const [activeId, setActiveId] = useState<string | null>(null);
   const [products, setProducts] = useState<RakutenProduct[]>([]);
   const [loading, setLoading] = useState(false);
+  const [tierCategory, setTierCategory] = useState([]);
+  const [showCategory, setShowCategory] = useState<string | undefined>();
 
-  // useEffect(() => {
-  //   fetchProducts({ setProducts, setLoading, });
-  // }, []);
+  // 初期表示のカテゴリを設定
+  useEffect(() => {
+    // カテゴリ
+    const tierCategoryData = {
+      categoryType: "tierカテゴリ",
+    };
+    axiosFunction({
+      api: "api/tier/category",
+      data: tierCategoryData,
+      setResult: setTierCategory,
+      method: "get",
+    });
+  }, []);
+
+  useEffect(() => {
+    // カテゴリ
+    setShowCategory(tierCategory[0]);
+  }, [tierCategory]);
 
   useEffect(() => {
     if (products.length > 0) {
@@ -174,9 +194,9 @@ function TierPage() {
   //   fetchProducts({ setProducts, setLoading });
   // };
 
-  useEffect(() => {
-    console.log(tiers);
-  }, [tiers]);
+  // useEffect(() => {
+  //   console.log(tiers);
+  // }, [tiers]);
 
   if (loading) {
     return <Loading message="読み込み中" />;
@@ -184,8 +204,34 @@ function TierPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl ">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Food</h1>
+        <div className="mb-4">
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-2xl font-bold text-gray-900 absolute left-8">
+              {tierCategory
+                .filter((c) => c === showCategory)
+                .map((category) => (
+                  <span
+                    key={category}
+                    className="text-2xl font-bold text-gray-900"
+                  >
+                    {category}
+                  </span>
+                ))}
+            </h1>
+
+            <RestaurantIcon
+              fontSize="large"
+              color={showCategory === "Food" ? "primary" : "inherit"}
+              onClick={() => setShowCategory(tierCategory[0])}
+              className="cursor-pointer"
+            />
+            <CategoryIcon
+              fontSize="large"
+              color={showCategory === "Goods" ? "primary" : "inherit"}
+              onClick={() => setShowCategory(tierCategory[1])}
+              className="cursor-pointer"
+            />
+          </div>
         </div>
 
         <DndContext

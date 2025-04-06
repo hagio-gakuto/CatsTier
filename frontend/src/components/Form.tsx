@@ -65,6 +65,7 @@ const Form: React.FC<FormProps> = ({ formField, formAPI }) => {
       api: formAPI,
       data,
       setResult: () => {},
+      method: "post",
     });
     // fetchProducts({ setProducts, setLoading, keyword: data.search });
   };
