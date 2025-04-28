@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PetReqDto {
 
+    private Integer id;
     private String uid;
     private String icon;
     private String name;

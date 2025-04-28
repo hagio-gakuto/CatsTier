@@ -3,16 +3,22 @@ export interface RakutenProduct {
     itemName: string;
     itemPrice: number;
     itemUrl: string;
+    //itemCaption: string;
+    itemCode: string;
     mediumImageUrls: Array<{ imageUrl: string }>;
+    genreId?: string;
   };
 }
 
 export interface TierItem {
   id: string;
+  itemCode: string;
   name: string;
   imageUrl: string;
   price?: number;
   url?: string;
+  genreId?: string;
+  tierId?: string;
 }
 
 export interface Tier {

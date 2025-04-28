@@ -16,6 +16,8 @@ export function TierRow({ tier }: Props) {
     id: tier.id,
   });
 
+  // console.log(tier);
+
   return (
     <div className="flex items-center w-full mb-4">
       <div
@@ -30,12 +32,12 @@ export function TierRow({ tier }: Props) {
       >
         <SortableContext
           id={tier.id}
-          items={tier.items.map((item) => item.id)}
+          items={tier.items.map((item) => item.itemCode)}
           strategy={horizontalListSortingStrategy}
         >
           <div className="flex flex-wrap gap-4">
             {tier.items.map((item) => (
-              <DraggableItem key={item.id} item={item} />
+              <DraggableItem key={item.itemCode} item={item} />
             ))}
           </div>
         </SortableContext>

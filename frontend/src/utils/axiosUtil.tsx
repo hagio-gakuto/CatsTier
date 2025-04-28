@@ -38,7 +38,13 @@ export const axiosFunction = async <T,>({
     //   console.log("No data received");
     // }
   } catch (error) {
-    showToast("error", getMessage("BE0007")); // エラーハンドリング
-    console.error(error);
+    if (axios.isAxiosError(error) && error.response) {
+      const errorMsg = error.response.data.errorMsg; // エラーの詳細をコンソールに出力
+      if (errorMsg) {
+        showToast("error", errorMsg.common); // エラーハンドリング
+      }
+    } else {
+      showToast("error", getMessage("BE0007")); // エラーハンドリング
+    }
   }
 };

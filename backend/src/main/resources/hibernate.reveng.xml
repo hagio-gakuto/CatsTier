@@ -6,5 +6,5 @@
 	<sql-type jdbc-type="VARCHAR" hibernate-type="string"></sql-type>
 	<sql-type jdbc-type="VARCHAR" hibernate-type="string"></sql-type>
 </type-mapping>
-<table-filter match-schema="public" match-name="pets"/>
+<table-filter match-schema="public" match-name="products"/>
 </hibernate-reverse-engineering>

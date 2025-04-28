@@ -19,6 +19,8 @@ export function DraggableItem({ item }: Props) {
       : undefined,
   };
 
+  // console.log(item);
+
   return (
     <div
       ref={setNodeRef}

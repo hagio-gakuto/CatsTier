@@ -21,6 +21,9 @@ import Loading from "../components/Loading";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import CategoryIcon from "@mui/icons-material/Category";
 import { axiosFunction } from "../utils/axiosUtil";
+import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const initialTiers: TierList = [
   { id: "S", label: "S", color: "#FF0000", items: [] },
@@ -31,6 +34,7 @@ const initialTiers: TierList = [
 ];
 
 function TierPage() {
+  const [dbTiers, setDbTiers] = useState<Record<string, TierItem[]>>({});
   const [tiers, setTiers] = useState<TierList>(initialTiers);
   const [unrankedItems, setUnrankedItems] = useState<TierItem[]>([]);
   //   const [activeId, setActiveId] = useState<string | null>(null);
@@ -38,8 +42,15 @@ function TierPage() {
   const [loading, setLoading] = useState(false);
   const [tierCategory, setTierCategory] = useState([]);
   const [showCategory, setShowCategory] = useState<string | undefined>();
+  const [movedItem, setMovedItem] = useState<string | undefined>();
+  const [moveToContainer, setMoveToContainer] = useState<string | undefined>();
+  const { activePetId } = useSelector((state: RootState) => state.pets);
+  const uid = Cookies.get("uid") as string;
 
-  // 初期表示のカテゴリを設定
+  //console.log("uid", uid);
+  // console.log(showCategory);
+
+  // 初期表示
   useEffect(() => {
     // カテゴリ
     const tierCategoryData = {
@@ -51,21 +62,75 @@ function TierPage() {
       setResult: setTierCategory,
       method: "get",
     });
-  }, []);
+    // 登録されているtierの取得
+    if (showCategory === undefined) return;
+    const tierData = {
+      petId: activePetId,
+      tierCategory: showCategory,
+    };
+    // console.log(tierData);
+    axiosFunction({
+      api: "api/tier",
+      data: tierData,
+      setResult: setDbTiers,
+      method: "get",
+    });
+  }, [activePetId, showCategory]);
 
+  // カテゴリの変更
   useEffect(() => {
     // カテゴリ
     setShowCategory(tierCategory[0]);
   }, [tierCategory]);
 
+  // 登録されているtierの取得
+  useEffect(() => {
+    if (showCategory === undefined) return;
+    // 登録されているtierの取得
+    const tierData = {
+      petId: activePetId,
+      tierCategory: showCategory,
+    };
+    axiosFunction({
+      api: "api/tier",
+      data: tierData,
+      setResult: setDbTiers,
+      method: "get",
+    });
+  }, [activePetId, showCategory]);
+
+  // 登録されているtierをtiersに
+  useEffect(() => {
+    if (Object.keys(dbTiers).length === 0) return; // ← dbTiersはオブジェクトだから lengthじゃなくて keysで判定！
+    console.log("DBtiers", dbTiers);
+    setLoading(true);
+
+    const transformed = tiers.map((tier) => {
+      // dbTiersの中から「対応するtierRank」の配列を探す
+      const dbTierItems = dbTiers[tier.label.toLowerCase()];
+      if (!dbTierItems) return tier; // 存在しないならそのまま返す
+
+      return {
+        ...tier,
+        items: dbTierItems, // 正しくitemsにセットして、新しいオブジェクトを返す！
+      };
+    });
+
+    console.log("transformed", transformed);
+    setTiers(transformed);
+    setLoading(false);
+  }, [dbTiers]);
+
   useEffect(() => {
     if (products.length > 0) {
       const items: TierItem[] = products.map((product) => ({
         id: `item-${Date.now()}-${Math.random()}`,
+        itemCode: product.Item.itemCode || "",
         name: product.Item.itemName,
         imageUrl: product.Item.mediumImageUrls[0]?.imageUrl || "",
         price: product.Item.itemPrice,
         url: product.Item.itemUrl,
+        genreId: product.Item.genreId || "",
       }));
       setUnrankedItems(items);
     }
@@ -138,27 +203,42 @@ function TierPage() {
 
     if (!over) return;
 
-    const activeContainer = findTierId(active.id as string) || "unranked";
-    const overContainer = over.data?.current?.sortable?.containerId || over.id;
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    const activeContainer = findTierId(activeId) || "unranked";
+    const overContainer = over.data?.current?.sortable?.containerId || overId;
+
+    // 対象のアイテムを取得
+    const allItems = [...tiers.flatMap((tier) => tier.items), ...unrankedItems];
+    const movedItem = allItems.find((item) => item.id === activeId);
+
+    if (!movedItem) return;
+
+    // === console.log 出力 ===
+    setMovedItem(movedItem.itemCode);
+    // console.log("🛫 移動元コンテナ:", activeContainer);
+    // console.log("🛬 移動先コンテナ:", overContainer);
+    setMoveToContainer(overContainer);
 
     if (activeContainer === overContainer) {
       if (activeContainer === "unranked") {
         const oldIndex = unrankedItems.findIndex(
-          (item) => item.id === active.id
+          (item) => item.id === activeId
         );
-        const newIndex = unrankedItems.findIndex((item) => item.id === over.id);
+        const newIndex = unrankedItems.findIndex((item) => item.id === overId);
         if (oldIndex !== -1 && newIndex !== -1) {
           setUnrankedItems((items) => arrayMove(items, oldIndex, newIndex));
         }
       } else {
-        setTiers((prev) => {
-          return prev.map((tier) => {
+        setTiers((prev) =>
+          prev.map((tier) => {
             if (tier.id === activeContainer) {
               const oldIndex = tier.items.findIndex(
-                (item) => item.id === active.id
+                (item) => item.id === activeId
               );
               const newIndex = tier.items.findIndex(
-                (item) => item.id === over.id
+                (item) => item.id === overId
               );
               return {
                 ...tier,
@@ -166,8 +246,8 @@ function TierPage() {
               };
             }
             return tier;
-          });
-        });
+          })
+        );
       }
     }
   };
@@ -194,13 +274,48 @@ function TierPage() {
   //   fetchProducts({ setProducts, setLoading });
   // };
 
-  // useEffect(() => {
-  //   console.log(tiers);
-  // }, [tiers]);
+  useEffect(() => {
+    if (!movedItem) return;
+    if (!moveToContainer) return;
+
+    // console.log("movedItem", movedItem);
+    // console.log("tiers", tiers);
+    const rank = tiers
+      .filter((tier) => tier.items.some((item) => item.itemCode === movedItem))
+      .map((obj) => ({
+        // movedItemの順位を取得(配列のなかのどの位置にあるか)
+        rank: obj.items.findIndex((item) => item.itemCode === movedItem),
+        //obj.items.map((item) =>  item.id === movedItem ? obj.id : null),
+      }));
+
+    //console.log("rank", rank);
+
+    const data = {
+      petId: activePetId,
+      uid: uid,
+      itemCode: movedItem,
+      tierCategory: showCategory,
+      tierRank: moveToContainer,
+      rankInTier: rank[0].rank,
+    };
+    console.log(data);
+
+    axiosFunction({
+      api: "api/tier",
+      data: data,
+      setResult: () => {},
+      method: "put",
+    });
+    // const unrankedItems = transformed.reduce((acc, obj) => {
+    //   const items = Object.values(obj)[0];
+    //   return acc.concat(items);
+    // }, []);
+  }, [movedItem, moveToContainer]);
 
   if (loading) {
     return <Loading message="読み込み中" />;
   }
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl ">

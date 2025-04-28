@@ -24,6 +24,7 @@ export const fetchProducts = async ({
         },
       }
     );
+    console.log("Rakuten API response:", response.data);
     setProducts(response.data.Items);
   } catch (err) {
     console.error("Error during fetching products:", err);

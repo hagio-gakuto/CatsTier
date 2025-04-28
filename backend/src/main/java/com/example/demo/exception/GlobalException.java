@@ -102,7 +102,7 @@ public class GlobalException extends ResponseEntityExceptionHandler {
 	// パスワード一致しないエラー（レスポンスコード：400）
 	@ExceptionHandler(GeneralException.class)
 	public ResponseEntity<Object> handlePasswordConfirmException(GeneralException ex, WebRequest request) {
-	    return createErrorResponse("PASSWORD_CONFIRM", ex.getMessage(), HttpStatus.BAD_REQUEST);
+	    return createErrorResponse("COMMON_ERROR", ex.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 	// 無効なフォーマット（レスポンスコード：400）

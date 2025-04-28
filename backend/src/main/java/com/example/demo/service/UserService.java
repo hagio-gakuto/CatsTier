@@ -46,7 +46,7 @@ public class UserService {
     @Transactional
     public boolean isUid(String uid) {
 	Optional<Users> result = userRepo.findById(uid);
-	System.out.println(result);
+//	System.out.println(result);
 	return result.isPresent();
     }
 
